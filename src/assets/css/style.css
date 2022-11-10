@@ -1,0 +1,34 @@
+@import "./reset.css";
+.post-list-container,
+.post-edit-container {
+  display: inline-block;
+}
+
+.post-list-container {
+  background-color: beige;
+  max-width: 400px;
+  width: 100%;
+}
+.post-list-container ul {
+  padding: 1rem;
+}
+.post-list-container ul .post-list {
+  display: flex;
+  justify-content: space-between;
+}
+.post-list-container ul .post-list div {
+  display: flex;
+}
+.post-list-container ul .post-list div .post-title {
+  display: block;
+  max-width: 250px;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.post-edit-container {
+  background-color: antiquewhite;
+}
+
+/*# sourceMappingURL=style.css.map */

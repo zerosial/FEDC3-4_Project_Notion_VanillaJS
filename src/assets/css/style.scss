@@ -1,0 +1,36 @@
+@import "./reset.css";
+
+.post-list-container,
+.post-edit-container {
+	display: inline-block;
+}
+
+.post-list-container {
+	background-color: beige;
+	max-width: 400px;
+	width: 100%;
+
+	ul {
+		padding: 1rem;
+		.post-list {
+			display: flex;
+			justify-content: space-between;
+
+			div {
+				display: flex;
+
+				.post-title {
+					display: block;
+					max-width: 250px;
+					overflow-x: hidden;
+					text-overflow: ellipsis;
+					white-space: nowrap;
+				}
+			}
+		}
+	}
+}
+
+.post-edit-container {
+	background-color: antiquewhite;
+}
