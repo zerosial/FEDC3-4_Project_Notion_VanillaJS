@@ -1,66 +1,45 @@
-import { getItem } from "../utils/storage.js";
+import { getItem, setItem } from "../utils/storage.js";
+import { $editPost, $home } from "../utils/templates.js";
 import Editor from "./Editor.js";
 
 export default function PostEdit({ $target, initialState }) {
 	const $postEdit = document.createElement("div");
-	$postEdit.className = "post-edit-container";
+	$postEdit.className = "post-form";
 
 	this.state = initialState;
 
-	let postLocalSaveKey = `temp-post-${this.state.postId}`;
-
-	const post = getItem(postLocalSaveKey, {
-		title: "",
-		content: "",
-	});
-
-	this.setState = (nextState) => {
+	// post를 받거나 id:new를 받거나
+	this.setState = async (nextState) => {
 		this.state = nextState;
 		this.render();
-	};
-
-	this.render = () => {
-		$target.appendChild($postEdit);
 	};
 
 	let timer = null;
 	const editor = new Editor({
 		$target: $postEdit,
-		initialState: this.state.post,
+		initialState: this.state,
 		onEditing: (post) => {
-			if (timer !== null) {
-				clearTimeout(timer);
-			}
-			timer = setTimeout(async () => {
-				setItem(postLocalSaveKey, {
-					...post,
-					tempSaveDate: new Date(),
-				});
-
-				const isNew = this.state.postId === "new";
-				if (isNew) {
-					const createdPost = await request("/documents", {
-						method: "POST",
-						body: JSON.stringify(post),
-					});
-					history.replaceState(null, null, `/posts/${createdPost.id}`);
-					removeItem(postLocalSaveKey);
-
-					this.setState({
-						postId: createdPost.id,
-					});
-				} else {
-					await request(`/documents/${post.id}`, {
-						method: "PUT",
-						body: JSON.stringify(post),
-					});
-					removeItem(postLocalSaveKey);
-				}
-			}, 2000);
+			console.log(post);
 		},
 	});
 
-	this.setState = async (nextState) => {};
+	this.render = () => {
+		$target.appendChild($postEdit);
+		const { id } = this.state;
+		console.log(id);
+		if (id === "") {
+			$postEdit.innerHTML = $home();
+			return;
+		} else if (id === "new") {
+			$postEdit.innerHTML = "";
+			editor.setState(this.state);
+			return;
+		} else {
+			$postEdit.innerHTML = "";
+			editor.setState(this.state);
+			return;
+		}
+	};
 
 	this.render();
 }

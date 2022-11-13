@@ -1,4 +1,5 @@
 import { request } from "../api/api.js";
+import { $emptyPage, $onLoadList } from "../utils/templates.js";
 
 export default function PostList({
 	$target,
@@ -10,50 +11,56 @@ export default function PostList({
 	const $postList = document.createElement("ul");
 	$target.appendChild($postList);
 
-	this.state = initialState;
+	this.state = {
+		posts: [],
+		documents: [],
+	};
 
 	this.setState = (nextState) => {
-		console.log(nextState);
-		this.state = nextState;
+		this.state.posts = nextState;
 		this.render();
 	};
 
-	this.listTemplate = (post) => {
-		return `
-			<li class="post-list" data-id="${post.id}">
-				<div>
-					<span class="open-folder icon-right-open"></span>
-					<span class="post-title">
-						${post.title}
-					</span>
-				</div>
-				<div>
-					<button class="delete-page-btn icon-trash"></button>
-					<button class="create-page-btn icon-plus"></button>
-				</div>
-			</li>
-			`;
-	};
-
-	console.log(this.state);
-
-	this.render = async () => {
+	this.render = () => {
 		$postList.innerHTML = `
-				${this.state.map((post) => this.listTemplate(post)).join("")}
+				${this.state.posts.map((post) => $onLoadList(post)).join("")}
 		`;
 	};
 
-	$postList.addEventListener("click", (e) => {
+	const onToggleList = (e, item) => {
+		this.state.documents = item.documents;
+		const $child = document.createElement("ul");
+		$child.className = "child-ul";
 		const $li = e.target.closest("li");
 
 		if ($li) {
+			$li.appendChild($child);
+			if (item.documents.length === 0) {
+				$child.innerHTML = $emptyPage();
+			} else {
+				$child.innerHTML = `
+					${item.documents.map((post) => $onLoadList(post)).join("")}
+				`;
+			}
+		}
+	};
+
+	// 리스트들 중 하나 클릭
+	$postList.addEventListener("click", (e) => {
+		const posts = this.state.posts;
+		const $li = e.target.closest("li");
+
+		if ($li.dataset.id !== undefined) {
 			const { className } = e.target;
 			const { id } = $li.dataset;
 
 			if (className.includes("open-folder")) {
-				onToggle(this.state.find((item) => item.id === parseInt(id)));
+				onToggleList(
+					e,
+					posts.find((item) => item.id === parseInt(id))
+				);
 			} else if (className.includes("delete-page-btn")) {
-				onRemove(id);
+				onRemove(posts.find((item) => item.id === parseInt(id)));
 			} else {
 				onPostClick(id);
 			}
