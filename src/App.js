@@ -1,38 +1,28 @@
-import PostList from "./components/PostList.js";
-import PostsPage from "./components/PostsPage.js";
-import PostEdit from "./components/PostEdit.js";
+import HomePage from "./pages/HomePage.js";
+import NotFound from "./pages/NotFound.js";
 import { request } from "./api/api.js";
 import { initRouter } from "./routes/router.js";
 
 export default function App({ $target }) {
-	const postsPage = new PostsPage({
-		$target,
-	});
+	const $globalContainer = document.createElement("div");
+	$globalContainer.className = "global-container";
+	$target.appendChild($globalContainer);
 
-	const postEdit = new PostEdit({
-		$target,
-		initialState: {
-			postId: "new",
-			post: {
-				title: "",
-				content: "",
-			},
-		},
-	});
+	const homePage = new HomePage({ $target: $globalContainer });
+	const notFound = new NotFound({ $target: $globalContainer });
 
-	this.route = () => {
-		$target.innerHTML = "";
+	this.route = async () => {
 		const { pathname } = window.location;
-
-		if (pathname === "/") {
-			postsPage.setState();
-		} else if (pathname.indexOf("/documents/") === 0) {
-			const [, , postId] = pathname.split("/");
-			postEdit.setState({ postId });
+		if (pathname === "/404") {
+			notFound.render();
+			return;
 		}
 	};
 
 	this.route();
-
 	initRouter(() => this.route());
+
+	window.addEventListener("popstate", () => {
+		this.route();
+	});
 }
