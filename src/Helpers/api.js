@@ -1,15 +1,11 @@
 import { routeChange } from './router.js';
+import { ERROR_MESSAGE, API_HEADER } from '../constants.js';
 import { getUserIdToAdress } from './getUserIdToAdress.js';
-import { API_END_POINT } from '../../endpoint.js';
-import { BASE_INIT_USERNAME, CONTENT_TYPE, ERROR_MESSAGE } from '../constants.js';
 
 export const getDocumentAll = async () => {
   const userId = getUserIdToAdress();
-  const res = await fetch(`${API_END_POINT}`, {
-    headers: {
-      'x-username': userId ? userId : BASE_INIT_USERNAME,
-      'Content-Type': CONTENT_TYPE,
-    },
+  const res = await fetch(`${process.env.API_END_POINT}`, {
+    headers: API_HEADER(userId),
   });
 
   if (!res.ok) {
@@ -21,11 +17,8 @@ export const getDocumentAll = async () => {
 
 export const getDocumentById = async ({ id }) => {
   const userId = getUserIdToAdress();
-  const res = await fetch(`${API_END_POINT}${id}`, {
-    headers: {
-      'x-username': userId ? userId : BASE_INIT_USERNAME,
-      'Content-Type': CONTENT_TYPE,
-    },
+  const res = await fetch(`${process.env.API_END_POINT}${id}`, {
+    headers: API_HEADER(userId),
   });
 
   if (!res.ok) {
@@ -39,12 +32,9 @@ export const getDocumentById = async ({ id }) => {
 
 export const postDocument = async ({ title, parent = null }) => {
   const userId = getUserIdToAdress();
-  const res = await fetch(`${API_END_POINT}`, {
+  const res = await fetch(`${process.env.API_END_POINT}`, {
     method: 'POST',
-    headers: {
-      'x-username': userId ? userId : BASE_INIT_USERNAME,
-      'Content-Type': CONTENT_TYPE,
-    },
+    headers: API_HEADER(userId),
     body: JSON.stringify({
       title,
       parent,
@@ -60,12 +50,9 @@ export const postDocument = async ({ title, parent = null }) => {
 
 export const putDocument = async ({ id, title, content }) => {
   const userId = getUserIdToAdress();
-  const res = await fetch(`${API_END_POINT}${id}`, {
+  const res = await fetch(`${process.env.API_END_POINT}${id}`, {
     method: 'PUT',
-    headers: {
-      'x-username': userId ? userId : BASE_INIT_USERNAME,
-      'Content-Type': CONTENT_TYPE,
-    },
+    headers: API_HEADER(userId),
     body: JSON.stringify({ title, content }),
   });
 
@@ -76,12 +63,9 @@ export const putDocument = async ({ id, title, content }) => {
 
 export const deleteDocument = async ({ id }) => {
   const userId = getUserIdToAdress();
-  const res = await fetch(`${API_END_POINT}${id}`, {
+  const res = await fetch(`${process.env.API_END_POINT}${id}`, {
     method: 'DELETE',
-    headers: {
-      'x-username': userId ? userId : BASE_INIT_USERNAME,
-      'Content-Type': CONTENT_TYPE,
-    },
+    headers: API_HEADER(userId),
   });
 
   if (!res.ok) {
